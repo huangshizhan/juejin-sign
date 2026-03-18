@@ -28,7 +28,7 @@ def get_juejin_cookie():
     return clean_cookie
 
 def sign_in():
-    """执行掘金签到（带空响应处理和详细日志）"""
+    """执行掘金签到（带空响应处理和明确错误提示）"""
     # 随机延迟0-30分钟（0-1800秒）
     delay_seconds = random.randint(0, 180)
     logging.info("⏳ 正在等待 %d 秒后签到（避免固定时间触发）", delay_seconds)
@@ -58,7 +58,13 @@ def sign_in():
         
         # 关键修复：处理空响应
         if not response.text.strip():
-            logging.error("🚨 API返回空响应内容 (状态码: %d)", response.status_code)
+            # 重要修复：添加明确的错误提示
+            logging.error("🚨 API返回空响应内容 (状态码: %d)，请检查Cookie是否过期！",
+                          response.status_code)
+            logging.error("⚠️ 解决方案：更新GitHub Secrets中的JUEJIN_COOKIE")
+            logging.error("👉 1. 登录掘金官网 → F12 → Network → 刷新页面")
+            logging.error("👉 2. 找到包含check_in的请求 → Headers → Cookie")
+            logging.error("👉 3. 复制完整Cookie值（不含引号）→ 更新GitHub Secrets")
             raise ValueError("API返回空响应内容")
         
         # 关键修复：处理非JSON响应
