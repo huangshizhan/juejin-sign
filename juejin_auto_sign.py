@@ -25,7 +25,7 @@ def get_juejin_cookie():
 
 def sign_in():
     """执行掘金签到（带超时和详细日志）"""
-    # 随机延迟0-30分钟（0-1800秒）
+    # 随机延迟0-30分钟（0-180秒）
     delay_seconds = random.randint(0, 1800)
     logging.info("⏳ 正在等待 %d 秒后签到（避免固定时间触发）", delay_seconds)
     time.sleep(delay_seconds)
