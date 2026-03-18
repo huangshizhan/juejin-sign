@@ -1,6 +1,8 @@
 import os
 import requests
 import json
+import time
+import random
 
 def get_juejin_cookie():
     """从 GitHub Secrets 获取 Cookie"""
@@ -10,7 +12,12 @@ def get_juejin_cookie():
     return cookie
 
 def sign_in():
-    """执行掘金签到（使用正确 API）"""
+    """执行掘金签到（随机延迟0-30分钟）"""
+    # 随机延迟0-30分钟（0-1800秒）
+    delay_seconds = random.randint(0, 1800)
+    print(f"⏳ 正在等待 {delay_seconds // 60} 分钟 {delay_seconds % 60} 秒后签到（避免固定时间触发）")
+    time.sleep(delay_seconds)
+    
     url = "https://api.juejin.cn/growth_api/v1/check_in?aid=2608&spider=0"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
@@ -19,7 +26,6 @@ def sign_in():
     }
     
     try:
-        # 发送 POST 请求（请求体为空）
         response = requests.post(url, headers=headers, data="")
         response.raise_for_status()
         result = response.json()
@@ -37,5 +43,6 @@ def sign_in():
 
 if __name__ == "__main__":
     print("🚀 掘金自动签到脚本启动...")
+    print("⏰ 当前时间: " + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
     sign_in()
     print("⏰ 脚本执行完成（GitHub Actions 将自动记录日志）")
