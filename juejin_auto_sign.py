@@ -28,7 +28,7 @@ def get_juejin_cookie():
     return clean_cookie
 
 def sign_in():
-    """执行掘金签到（带超时、JSON解析修复和详细日志）"""
+    """执行掘金签到（带空响应处理和详细日志）"""
     # 随机延迟0-30分钟（0-1800秒）
     delay_seconds = random.randint(0, 180)
     logging.info("⏳ 正在等待 %d 秒后签到（避免固定时间触发）", delay_seconds)
@@ -55,6 +55,11 @@ def sign_in():
         )
         elapsed = time.time() - start_time
         logging.info("✅ API 响应成功 (状态码: %d, 耗时: %.2f秒)", response.status_code, elapsed)
+        
+        # 关键修复：处理空响应
+        if not response.text.strip():
+            logging.error("🚨 API返回空响应内容 (状态码: %d)", response.status_code)
+            raise ValueError("API返回空响应内容")
         
         # 关键修复：处理非JSON响应
         try:
