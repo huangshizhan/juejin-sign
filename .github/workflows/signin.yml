@@ -1,0 +1,27 @@
+name: 掘金自动签到（随机延迟）
+
+on:
+  # 每天 UTC 时间 1:00（对应北京时间 9:00）
+  schedule:
+    - cron: '0 1 * * *'
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  sign-in:
+    runs-on: ubuntu-latest
+    env:
+      JUEJIN_COOKIE: ${{ secrets.JUEJIN_COOKIE }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run sign-in script
+        run: python juejin_auto_sign.py
