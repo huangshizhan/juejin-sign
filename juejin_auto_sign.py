@@ -16,17 +16,21 @@ logging.basicConfig(
 )
 
 def get_juejin_cookie():
-    """从 GitHub Secrets 获取 Cookie"""
+    """从 GitHub Secrets 获取 Cookie，并清理换行符"""
     cookie = os.getenv('JUEJIN_COOKIE')
     if not cookie:
         raise ValueError("JUEJIN_COOKIE 环境变量未设置")
-    logging.info("✅ Cookie 已加载 (长度: %d 字节)", len(cookie))
-    return cookie
+    
+    # 关键修复：移除Cookie中的换行符
+    clean_cookie = cookie.replace('\n', '').replace('\r', '')
+    
+    logging.info("✅ Cookie 已加载 (清理后长度: %d 字节)", len(clean_cookie))
+    return clean_cookie
 
 def sign_in():
     """执行掘金签到（带超时和详细日志）"""
-    # 随机延迟0-30分钟（0-180秒）
-    delay_seconds = random.randint(0, 1800)
+    # 随机延迟0-30分钟（0-1800秒）
+    delay_seconds = random.randint(0, 180)
     logging.info("⏳ 正在等待 %d 秒后签到（避免固定时间触发）", delay_seconds)
     time.sleep(delay_seconds)
     
